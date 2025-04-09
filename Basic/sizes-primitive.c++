@@ -26,6 +26,9 @@ int main() {
 // Size of float: 4 bytes  
 // Size of double: 8 bytes
 // Size of char: 1 bytes
-// Size of bool: 1 bytes
+// Size of bool: 1 bytes    
+// Size of short: 2 bytes
+// Size of long: 8 bytes
+// Size of long long: 8 bytes
 // Note: The size of data types may vary based on the system architecture (32-bit or 64-bit) and compiler settings.
 // The above output is for a 64-bit system. On a 32-bit system, the size of int and float may be 4 bytes, while double may be 8 bytes.
