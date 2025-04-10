@@ -216,68 +216,44 @@ def chatbot():
 if __name__ == "__main__":
     chatbot()
 
+from transformers import BertTokenizer, TFBertForQuestionAnswering
+import tensorflow as tf
 
-
-import torch
-from transformers import BertTokenizer, BertForQuestionAnswering
-import pandas as pd
-
-# Sample DataFrame (replace this with your actual DataFrame)
-data = {
-    'Name': ['Alice', 'Bob', 'Charlie'],
-    'Age': [20, 22, 19],
-    'Course': ['Math', 'Physics', 'Chemistry'],
-    'Marks': [85, 90, 78],
-    'Grade': ['A', 'A+', 'B']
-}
-df = pd.DataFrame(data)
-
-# Convert table to searchable text format (context for BERT)
-student_texts = [
-    f"{row['Name']} is {row['Age']} years old, enrolled in {row['Course']}, scored {row['Marks']} marks, and has grade {row['Grade']}."
-    for _, row in df.iterrows()
-]
-
-# Combine all student texts into a single context
-context = " ".join(student_texts)
-
-# Load pre-trained BERT model and tokenizer
+# Load pre-trained tokenizer and model for question-answering
 tokenizer = BertTokenizer.from_pretrained('bert-large-uncased-whole-word-masking-finetuned-squad')
-model = BertForQuestionAnswering.from_pretrained('bert-large-uncased-whole-word-masking-finetuned-squad')
+qa_model = TFBertForQuestionAnswering.from_pretrained('bert-large-uncased-whole-word-masking-finetuned-squad')
 
-# Function to answer questions
-def answer_question(question, context):
-    # Tokenize the question and context
-    inputs = tokenizer.encode_plus(question, context, add_special_tokens=True, return_tensors="pt", truncation=True, max_length=512)
+# Example student information context
+context = """
+Alice is 20 years old, enrolled in Computer Science, scored 85 marks, and has grade A.
+Bob is 21 years old, enrolled in Mathematics, scored 78 marks, and has grade B.
+Charlie is 22 years old, enrolled in Physics, scored 92 marks, and has grade A+.
+"""
+
+# Function to get answer using the fine-tuned Q/A model
+def get_answer(question, context):
+    inputs = tokenizer(question, context, return_tensors='tf', truncation=True, max_length=512)
+    input_ids = inputs['input_ids']
+    outputs = qa_model(inputs)
     
-    # Get input IDs, token type IDs, and attention mask
-    input_ids = inputs["input_ids"]
-    attention_mask = inputs["attention_mask"]
+    # Get the most probable start and end positions of the answer
+    start_index = tf.argmax(outputs.start_logits, axis=1).numpy()[0]
+    end_index = tf.argmax(outputs.end_logits, axis=1).numpy()[0]
     
-    # Run the model
-    with torch.no_grad():
-        outputs = model(input_ids, attention_mask=attention_mask)
-        answer_start_scores = outputs.start_logits
-        answer_end_scores = outputs.end_logits
-    
-    # Find the start and end of the answer
-    answer_start = torch.argmax(answer_start_scores)
-    answer_end = torch.argmax(answer_end_scores) + 1
-    
-    # Convert tokens to string
-    answer_tokens = input_ids[0, answer_start:answer_end]
-    answer = tokenizer.decode(answer_tokens, skip_special_tokens=True)
-    
+    # Decode the answer from input_ids
+    answer = tokenizer.decode(input_ids[0][start_index:end_index + 1])
     return answer
 
-# Example usage
+# Example queries
 questions = [
-    "How old is Alice?",
+    "Who is 20 years old?",
+    "What is Charlie's grade?",
     "What course is Bob enrolled in?",
-    "What grade did Charlie get?"
+    "How many marks did Alice score?"
 ]
 
+# Get answers for the queries
 for question in questions:
-    answer = answer_question(question, context)
-    print(f"Question: {question}")
-    print(f"Answer: {answer}\n")
+    answer = get_answer(question, context)
+    print(f"Q: {question}")
+    print(f"A: {answer}\n")
