@@ -215,3 +215,69 @@ def chatbot():
 # Run the chatbot
 if __name__ == "__main__":
     chatbot()
+
+
+
+import torch
+from transformers import BertTokenizer, BertForQuestionAnswering
+import pandas as pd
+
+# Sample DataFrame (replace this with your actual DataFrame)
+data = {
+    'Name': ['Alice', 'Bob', 'Charlie'],
+    'Age': [20, 22, 19],
+    'Course': ['Math', 'Physics', 'Chemistry'],
+    'Marks': [85, 90, 78],
+    'Grade': ['A', 'A+', 'B']
+}
+df = pd.DataFrame(data)
+
+# Convert table to searchable text format (context for BERT)
+student_texts = [
+    f"{row['Name']} is {row['Age']} years old, enrolled in {row['Course']}, scored {row['Marks']} marks, and has grade {row['Grade']}."
+    for _, row in df.iterrows()
+]
+
+# Combine all student texts into a single context
+context = " ".join(student_texts)
+
+# Load pre-trained BERT model and tokenizer
+tokenizer = BertTokenizer.from_pretrained('bert-large-uncased-whole-word-masking-finetuned-squad')
+model = BertForQuestionAnswering.from_pretrained('bert-large-uncased-whole-word-masking-finetuned-squad')
+
+# Function to answer questions
+def answer_question(question, context):
+    # Tokenize the question and context
+    inputs = tokenizer.encode_plus(question, context, add_special_tokens=True, return_tensors="pt", truncation=True, max_length=512)
+    
+    # Get input IDs, token type IDs, and attention mask
+    input_ids = inputs["input_ids"]
+    attention_mask = inputs["attention_mask"]
+    
+    # Run the model
+    with torch.no_grad():
+        outputs = model(input_ids, attention_mask=attention_mask)
+        answer_start_scores = outputs.start_logits
+        answer_end_scores = outputs.end_logits
+    
+    # Find the start and end of the answer
+    answer_start = torch.argmax(answer_start_scores)
+    answer_end = torch.argmax(answer_end_scores) + 1
+    
+    # Convert tokens to string
+    answer_tokens = input_ids[0, answer_start:answer_end]
+    answer = tokenizer.decode(answer_tokens, skip_special_tokens=True)
+    
+    return answer
+
+# Example usage
+questions = [
+    "How old is Alice?",
+    "What course is Bob enrolled in?",
+    "What grade did Charlie get?"
+]
+
+for question in questions:
+    answer = answer_question(question, context)
+    print(f"Question: {question}")
+    print(f"Answer: {answer}\n")
