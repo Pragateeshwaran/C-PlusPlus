@@ -11,7 +11,7 @@ struct mytype{
 };
 
 int main(){
-    mytype obj1 = {"praga", 10, 0.2};
+    mytype obj1 = {"praga", 10, 'c'}; //aggregate initialization 
     cout <<"obj sting: "<<obj1.a<<endl<<"obj int: "<<obj1.b<<endl<<"obj char: "<<obj1.c<<endl<<"obj float: "<< obj1.d<<endl;
     printf("\n");
     obj1.print();
