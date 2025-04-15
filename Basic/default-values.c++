@@ -25,7 +25,7 @@ void testLocals() {
     cout << "int: " << l_int << endl;
     cout << "float: " << l_float << endl;
     cout << "double: " << l_double << endl;
-    cout << "char: " << int(l_char) << " (as int, may be garbage)\n";
+    cout << "char: " << l_char << " (as int, may be garbage)\n";
     cout << "bool: " << l_bool << endl;
     cout << "void*: " << l_ptr << endl;
     cout << "string: " << l_string << " (default empty)" << endl;
@@ -45,7 +45,7 @@ void testStatics() {
     cout << "int: " << s_int << endl;
     cout << "float: " << s_float << endl;
     cout << "double: " << s_double << endl;
-    cout << "char: " << int(s_char) << endl;
+    cout << "char: " << s_char << endl;
     cout << "bool: " << s_bool << endl;
     cout << "void*: " << s_ptr << endl;
     cout << "string: " << s_string << endl;
@@ -56,7 +56,7 @@ int main() {
     cout << "int: " << g_int << endl;
     cout << "float: " << g_float << endl;
     cout << "double: " << g_double << endl;
-    cout << "char: " << int(g_char) << endl;
+    cout << "char: " << g_char << endl;
     cout << "bool: " << g_bool << endl;
     cout << "void*: " << g_ptr << endl;
     cout << "string: " << g_string << endl;

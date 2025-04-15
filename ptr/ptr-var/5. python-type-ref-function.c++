@@ -10,7 +10,7 @@ int multiply(int a, int b) {
 }
 
 int main(){
-    void (*myfun)(int, int) = add;
+    void (*myfun)(int, int) = &add;
     myfun(10, 20); // Call the function pointer to add
     cout<<"Type of myfun: " << typeid(myfun).name() << endl; // Print the type of myfun
     int (*myfun2)(int, int) = multiply; // Declare a function pointer for multiply
