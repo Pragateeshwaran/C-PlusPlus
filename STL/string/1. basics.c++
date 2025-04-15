@@ -16,5 +16,7 @@ int main(){
     cout << str.substr(0, 5) << endl;
     cout << str.substr(7) << endl; 
     cout << str.substr(distance(str.begin(), str.begin()), distance(str.begin(), str.end())) << endl;
+    str[0] = 'a';
+    cout << str <<endl;
     return 0;
 }
