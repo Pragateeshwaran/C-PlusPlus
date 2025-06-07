@@ -2,8 +2,8 @@
 using namespace std;
 void function(){
     // cout<<sizeof(void)<<endl; 
-    // cout<<void<<endl;
-    cout<<int<<endl;
+    cout<<void<<endl;
+    // cout<<int<<endl;
 }
 int main(){
     function();

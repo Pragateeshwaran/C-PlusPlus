@@ -10,3 +10,9 @@ int main(int argc, char* argv[]) {
 
     return 0;
 }
+
+// to run this code, compile it with a C++ compiler and run it with command line arguments.
+// For example:
+// c++ cmd-args.c++ 
+// ./a.out 1 2 3
+// to char remove stoi conversion
