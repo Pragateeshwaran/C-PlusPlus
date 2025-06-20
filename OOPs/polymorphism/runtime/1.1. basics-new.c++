@@ -25,10 +25,13 @@ public:
 int main() {
     Animal* a1 = new Dog();
     Animal* a2 = new Cat();
+    Animal *a3 = new Animal();
     cout << a1 <<endl << a2 <<endl;
+    
     a1->sound();  // Woof!
     a2->sound();  // Meow!
-
+    a3->sound();  // Some animal sound
+    
     delete a1;
     delete a2;
 }
